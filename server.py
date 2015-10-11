@@ -16,12 +16,22 @@ serversocket.bind((host, port))
 #queue up to 5 requests
 serversocket.listen(5)
 
+get=''
 while True:
 	#establish a connection
 	clientsocket,addr = serversocket.accept()
 
 	print("Got a connection from %s" % str(addr))
+	clientsocket.send("Holla,,here we go..")
+	get = server_socket.getsockopt(SOL_SOCKET,SO_KEEPALIVE)
+	print "Get keep alive:",get
+	set = server_socket.setsockopt(SOL_SOCKET,
+	SO_KEEPALIVE,1)
+	print "Set keep alive",server.getsockopt(SOL_SOCKET,SO_KEEPALIVE)
+
 	currentTime = time.ctime(time.time()) + "\r\n"
 	clientsocket.send(currentTime.encode('ascii'))
+
 	clientsocket.close()
+	break;
 
