@@ -14,11 +14,12 @@ void error(const char *msg)
 
 int main(int argc, char *argv[])
 {
-	int sockfd, newsockfd, portno;
+	int sockfd, newsockfd, portno, cli_addr;
 	socklen_t clilen;
 	char buffer[256];
-	struct sockaddr_in serv_addr, cli_addr;
+	struct sockaddr_in serv_addr;
 	int n;
+	int s;
 	if (argc < 2)
 	{
 		fprintf(stderr,"Error, no port provided\n");
@@ -45,14 +46,29 @@ int main(int argc, char *argv[])
 	bzero(buffer,256);
 	
 	n = read(newsockfd,buffer,255);
-	if(n<0) error("ERROR reading from socket");
+	if(n<0)
+	        error("ERROR reading from socket");
 	printf("Here is the message: %s\n",buffer);
 	n = write(newsockfd,"I got your message",18);
-	if (n < 0)error("ERROR writing to socket");
 
+	//get
+	s=getsockopt(sockfd, SOL_SOCKET, SO_SNDBUF,(struct sockaddr *) &cli_addr, &clilen);
+	
+	printf("getsockopt = %d\n", cli_addr);
+	if(cli_addr > 0)
+		printf("already set",cli_addr);
+	else if(cli_addr < 0)
+		printf("Error!,error number",cli_addr);
+	else
+		printf("elseeeeee",cli_addr);
 
-	close(newsockfd);
-	close(sockfd);
+	//set
+	cli_addr = 98304;
+	
+	
+	s = setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (struct sockaddr *) &cli_addr, sizeof(clilen));
+	printf("SetSockopt = %d\n",cli_addr);
+
 	return 0;
 
 }
